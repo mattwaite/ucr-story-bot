@@ -10,7 +10,7 @@ Using a list of data, we're going to generate a simple story out of it. The stor
 """
 import string
 
-
+# our data, for cities, state and national
 cities = [["Beatrice Police Dept","NE",433.7,281.4,280.9],
 ["Bellevue City Police Dept","NE",159.5,125.2,139.6],
 ["Columbus Police Dept","NE",107.3,69.3,122.1],
@@ -26,6 +26,10 @@ cities = [["Beatrice Police Dept","NE",433.7,281.4,280.9],
 ["Papillion Police Dept","NE",61.3,77.9,142.9],
 ["Scotts Bluff Police Dept","NE",375.0,358.8,232.7],
 ["South Sioux Police Dept","NE",124.9,134.1,142.3]]
+
+state = ["Nebraska",310.7,289.4,279.5]
+
+national = ["United States of America",457.5,431.9,403.6]
 
 #first, loop through our list of cities
 for city in cities:
@@ -64,12 +68,29 @@ for city in cities:
     else:
         pct_change_direction = "held steady"
 
-    #Uh oh. If we have a decrease, it'll appear as a negative number. Since news organizations don't publish -10 percent, we have to fix that. It's simple -- we just need the absolute value.
+    #Uh oh. If we have a decrease, it'll appear as a negative number. Since news organizations don't publish "a -10 percent decline", we have to fix that. It's simple -- we just need the absolute value.
     pct_change_text = abs(pct_change)
+
+    # so we know what the trend was in the city. How about some context? What about the state?
+    if city[4] > state[3]:
+        state_comp = "higher"
+    elif city[4] < state[3]:
+        state_comp = "lower"
+    else:
+        state_comp = "same"
+        
+    #or the nation.
+    if city[4] > national[3]:
+        national_comp = "higher"
+    elif city[4] < national[3]:
+        national_comp = "lower"
+    else:
+        national_comp = "same"
     
     #write the story
     lead = "%s police reported %s violent crime in 2010 compared to 2009%s, according to federal statistics." % (clean_city, direction, trend_length_clause)
     second = "The violent crime rate %s by %.0f percent from 2009 to 2010, the Federal Bureau of Investigation reported. In 2010, %s police reported %s violent crimes per 100,000 residents, versus %s violent crimes per 100,000 residents in 2009." % (pct_change_direction, pct_change_text, clean_city, city[4], city[3])
-    story = lead + "\n" + second + "\n"
+    context = "The 2010 violent crime rate in %s is %s than the statewide rate of %s per 100,000 people, and %s than the national rate of %s per capita." % (clean_city, state_comp, state[3], national_comp, national[3])
+    story = lead + "\n" + second + "\n" + context + "\n"
 
     print story
