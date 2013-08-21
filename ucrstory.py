@@ -88,9 +88,9 @@ for city in cities:
         national_comp = "same"
     
     #write the story
-    lead = "%s police reported %s violent crime in 2010 compared to 2009%s, according to federal statistics." % (clean_city, direction, trend_length_clause)
+    lede = "%s police reported %s violent crime in 2010 compared to 2009%s, according to federal statistics." % (clean_city, direction, trend_length_clause)
     second = "The violent crime rate %s by %.0f percent from 2009 to 2010, the Federal Bureau of Investigation reported. In 2010, %s police reported %s violent crimes per 100,000 residents, versus %s violent crimes per 100,000 residents in 2009." % (pct_change_direction, pct_change_text, clean_city, city[4], city[3])
     context = "The 2010 violent crime rate in %s is %s than the statewide rate of %s per 100,000 people, and %s than the national rate of %s per capita." % (clean_city, state_comp, state[3], national_comp, national[3])
-    story = lead + "\n" + second + "\n" + context + "\n"
+    story = lede + "\n" + second + "\n" + context + "\n"
 
     print story
