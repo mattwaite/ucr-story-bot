@@ -1,4 +1,4 @@
-#How to write a thousand ledes in seconds
+#How to write 282 ledes in a second
 
 If you're the kind of person who worries about your job when they read about bots writing stories or the kind who tweets something snarky/dumb after reading something like [this](http://www.poynter.org/latest-news/mediawire/221669/washington-post-considered-using-robot-sportswriters/), stop.
 
