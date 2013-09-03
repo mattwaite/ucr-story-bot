@@ -3,90 +3,82 @@
 """
 ucrstory.py
 
-Created by Matthew Waite on 2013-01-26.
-
-Using a list of data, we're going to generate a simple story out of it. The story will have several forms, composed of paragraphs.
+Using a csv file of data, we're going to generate a simple story out of it.
 
 """
-import string
+#First we're going to need some libraries. You simply import them.
 
-# our data, for cities, state and national
-cities = [["Beatrice Police Dept","NE",433.7,281.4,280.9],
-["Bellevue City Police Dept","NE",159.5,125.2,139.6],
-["Columbus Police Dept","NE",107.3,69.3,122.1],
-["Fremont Police Dept","NE",209.0,130.8,189.4],
-["Grand Island Police Dept","NE",417.6,486.1,346.2],
-["Hastings Police Dept","NE",188.8,204.1,132.5],
-["Kearney Police Dept","NE",219.9,204.8,201.4],
-["Lavista Police Dept","NE",58.5,52.0,101.5],
-["Lexington Police Dept","NE",255.6,207.1,303.0],
-["Lincoln Police Dept","NE",509.6,457.9,486.9],
-["Norfolk City Police Dept","NE",147.2,148.5,181.7],
-["Omaha Police Dept","NE",605.6,533.4,556.0],
-["Papillion Police Dept","NE",61.3,77.9,142.9],
-["Scotts Bluff Police Dept","NE",375.0,358.8,232.7],
-["South Sioux Police Dept","NE",124.9,134.1,142.3]]
+import string, csv
 
-state = ["Nebraska",310.7,289.4,279.5]
+#Next, we need to read from our CSV file. So to do that, we declare a variable called ucrdata and read the data using Python's csv library.
 
-national = ["United States of America",457.5,431.9,403.6]
+ucrdata = csv.reader(open('UCRdata.csv', 'rU'), dialect="excel")
 
-#first, loop through our list of cities
-for city in cities:
+#The rU part is reading it in Universal Line Ending Mode. It just means it'll read it correctly. Excel outputs some funky stuff.
 
-    #clean up the city name
-    clean_city = city[0].replace(" Police Dept", "")
-    #Lets get rid of that City business
-    clean_city = clean_city.replace(" City", "")
+#We need to skip the first row, because it's a header row.
+
+ucrdata.next()
+
+#Now we need to write a huge loop. In Python, you write a loop simply by saying for X in Y, where X can be whatever you want to call the individual item and Y must be the thing you're looping over.
+
+for row in ucrdata:
+    '''
+    The great thing now is that we have all of our data in that row, and we can address it by number. The numbers start with zero. So the first column
+    is row[0] and the second column is row[1] and so on. So we have to know the layout of our data. Keeping it up in a spreadsheet is handy.    
+    
+    It would be good to have a strategy here. We need to do the following:
+    1. Calculate the crime rate for each year we have data.
+    2. Compare them with percent changes.
+    3. Calculate the property crime and violent crime rates.
+    4. Compare them with percent changes.
+    5. Calculate rates and changes for murder, rape, robbery, aggravated assault, theft, burglary and car theft.
+    6. Write a lede.
+    7. Write some context graphs.
+    8. Write some code to switch these up depending on the rates for individual crimes.
+    '''
+    
+    # Let's do step 1 in our strategy. We need to calculate the crime rate for each year we have data. So we need to add property crime and violent crime, divide that by the population and mulitply by 100000 to give us the per-capita rate.
+
+    rate2012 = ((row[4]+row[9])/row(3))*100000
+    rate2011 = ((row[15]+row[20])/row(14))*100000
+    rate2010 = ((row[25]+row[30])/row(24))*100000
 
     #determine the year over year trend
     
-    if city[4] > city[3]:
-        direction = "more"
-    elif city[4] < city[3]:
-        direction = "less"
+    if rate2012 > rate2011:
+        direction = "increased"
+    elif rate2012 < rate2011:
+        direction = "decreased"
     else:
-        direction = "the same"
+        direction = "held steady"
     
     # determine the duration of the trend
-    if city[4] > city[3] > city[2]:
+    if rate2012 > rate2011 > rate2010:
         trend_length_clause = ", the second year in a row crime has increased"
-    elif city[4] < city[3] < city[2]:
+    elif rate2012 < rate2011 < rate2010:
         trend_length_clause = ", the second year in a row crime has declined"
     else:
         trend_length_clause = ""
 
     # percent change math time -- remember (new-old)/old
 
-    pct_change = ((city[4]-city[3]) / city[3])*100
+    pct_change = (rate2012-rate2011) / rate2011)*100
 
     # lets get some verbiage on the direction of the change
     if pct_change > 0:
-        pct_change_direction = "increased"
+        pct_change_direction = "rose"
     elif pct_change < 0:
-        pct_change_direction = "decreased"
+        pct_change_direction = "slid"
     else:
-        pct_change_direction = "held steady"
+        pct_change_direction = "maintained"
 
     #Uh oh. If we have a decrease, it'll appear as a negative number. Since news organizations don't publish "a -10 percent decline", we have to fix that. It's simple -- we just need the absolute value.
     pct_change_text = abs(pct_change)
-
-    # so we know what the trend was in the city. How about some context? What about the state?
-    if city[4] > state[3]:
-        state_comp = "higher"
-    elif city[4] < state[3]:
-        state_comp = "lower"
-    else:
-        state_comp = "same"
-        
-    #or the nation.
-    if city[4] > national[3]:
-        national_comp = "higher"
-    elif city[4] < national[3]:
-        national_comp = "lower"
-    else:
-        national_comp = "same"
     
+
+    #This is broken -- fixing it in the morning.
+
     #write the story
     lede = "%s police reported %s violent crime in 2010 compared to 2009%s, according to federal statistics." % (clean_city, direction, trend_length_clause)
     second = "The violent crime rate %s by %.0f percent from 2009 to 2010, the Federal Bureau of Investigation reported. In 2010, %s police reported %s violent crimes per 100,000 residents, versus %s violent crimes per 100,000 residents in 2009." % (pct_change_direction, pct_change_text, clean_city, city[4], city[3])
