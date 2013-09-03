@@ -28,13 +28,13 @@ We're going to use Python because it's beginner friendly and pretty readable as 
 
 So we need to import some libraries you're going to need, specifically the string and csv libraries. To do that, you simply type:
 
-import string, csv
+    import string, csv
 
 Easy, right? Note: Nothing happened. And that's good.
 
 Next, we need to read our data file. It's a CSV file -- that means comma-separated values -- which is a standard datafile format. There's a thousand tutorials online on how to read a CSV file with Python, but it's pretty straightforward.
 
-ucrdata = csv.reader(open('UCRdata.csv', 'rU'), dialect="excel")
+    ucrdata = csv.reader(open('UCRdata.csv', 'rU'), dialect="excel")
 
 In English, that says create a variable called ucrdata and stuff it with the results of the csv library's reader function, which is going to open a file called UCRdata.csv, which is a csv file created by Excel, so do some special things to deal with that. So now, we've got a thing -- in programming terms, it's called an object -- that has a bunch of data in it. And because that data is structured, we can do things with it.
 
@@ -44,52 +44,56 @@ So, we're going to do something similar with ucrdata, our object. We're going to
 
 But first, we need to skip the header row: 
 
-ucrdata.next()
+    ucrdata.next()
 
 Now, let's loop.
 
-for row in ucrdata:
+    for row in ucrdata:
 
 No seriously. That's it. We've just started a loop. It means what it says. For each row in ucrdata, let's do something.
 
 When you're inside a loop, you have to indent four spaces -- tabs are bad in Python. 
 
-    rate2012 = ((row[4]+row[9])/row(3))*100000
-    rate2011 = ((row[15]+row[20])/row(14))*100000
-    rate2010 = ((row[25]+row[30])/row(24))*100000
+        rate2012 = ((row[4]+row[9])/row(3))*100000
+        rate2011 = ((row[15]+row[20])/row(14))*100000
+        rate2010 = ((row[25]+row[30])/row(24))*100000
+        
+So this just calculates the per capita rates for each city. It goes to column 5 and grabs the number, then to column 10 and grabs the number and adds them together. Then it divides it by column 4, the total population, and multiplies the results by 100,000. That gives you the total per capita crime rate for a city.
 
-    if rate2012 > rate2011:
-        direction = "increased"
-    elif rate2012 < rate2011:
-        direction = "decreased"
-    else:
-        direction = "held steady"
+        if rate2012 > rate2011:
+            direction = "increased"
+        elif rate2012 < rate2011:
+            direction = "decreased"
+        else:
+            direction = "held steady"
+            
+This literally says what it says. If rate2012 is greater than rate2011, crime went up. If it went up, create a variable called direction and make it increased. Or if it went down, make it decreased. Otherwise, it held steady.
     
-    # determine the duration of the trend
-    if rate2012 > rate2011 > rate2010:
-        trend_length_clause = ", the second year in a row crime has increased"
-    elif rate2012 < rate2011 < rate2010:
-        trend_length_clause = ", the second year in a row crime has declined"
-    else:
-        trend_length_clause = ""
+        # determine the duration of the trend
+        if rate2012 > rate2011 > rate2010:
+            trend_length_clause = ", the second year in a row crime has increased"
+        elif rate2012 < rate2011 < rate2010:
+            trend_length_clause = ", the second year in a row crime has declined"
+        else:
+            trend_length_clause = ""
 
     # percent change math time -- remember (new-old)/old
 
-    pct_change = (rate2012-rate2011) / rate2011)*100
+        pct_change = (rate2012-rate2011) / rate2011)*100
 
     # lets get some verbiage on the direction of the change
-    if pct_change > 0:
-        pct_change_direction = "rose"
-    elif pct_change < 0:
-        pct_change_direction = "slid"
-    else:
-        pct_change_direction = "maintained"
+        if pct_change > 0:
+            pct_change_direction = "rose"
+        elif pct_change < 0:
+            pct_change_direction = "slid"
+        else:
+            pct_change_direction = "maintained"
 
 Uh oh. If we have a decrease, it'll appear as a negative number. Since news organizations don't publish "a -10 percent decline", we have to fix that. It's simple -- we just need the absolute value.
 
-    pct_change_text = abs(pct_change)
+        pct_change_text = abs(pct_change)
 
 Now, all that's left is to put these pieces together.
     
-    lede = "%s police reported %s violent crime in 2010 compared to 2009%s, according to federal statistics." % (clean_city, direction, trend_length_clause)
+        lede = "%s police reported %s violent crime in 2010 compared to 2009%s, according to federal statistics." % (clean_city, direction, trend_length_clause)
 
