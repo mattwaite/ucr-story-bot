@@ -39,31 +39,30 @@ for row in ucrdata:
     '''
     
     # Let's do step 1 in our strategy. We need to calculate the crime rate for each year we have data. So we need to add property crime and violent crime, divide that by the population and mulitply by 100000 to give us the per-capita rate.
+    rate2012 = ((float(row[4])+float(row[9]))/float(row[3]))*100000
+    rate2011 = ((float(row[15])+float(row[20]))/float(row[14]))*100000
+    rate2010 = ((float(row[25])+float(row[30]))/float(row[24]))*100000
 
-    rate2012 = ((row[4]+row[9])/row(3))*100000
-    rate2011 = ((row[15]+row[20])/row(14))*100000
-    rate2010 = ((row[25]+row[30])/row(24))*100000
+    #determine the year over year trend for the overall rate
 
-    #determine the year over year trend
-    
     if rate2012 > rate2011:
-        direction = "increased"
+        direction = "more"
     elif rate2012 < rate2011:
-        direction = "decreased"
+        direction = "less"
     else:
-        direction = "held steady"
-    
+        direction = "the same"
+
     # determine the duration of the trend
     if rate2012 > rate2011 > rate2010:
-        trend_length_clause = ", the second year in a row crime has increased"
+        trend_length_clause = ", the second year in a row figures have increased"
     elif rate2012 < rate2011 < rate2010:
-        trend_length_clause = ", the second year in a row crime has declined"
+        trend_length_clause = ", the second year in a row figures have declined"
     else:
         trend_length_clause = ""
 
     # percent change math time -- remember (new-old)/old
 
-    pct_change = (rate2012-rate2011) / rate2011)*100
+    pct_change = ((rate2012-rate2011) / rate2011)*100
 
     # lets get some verbiage on the direction of the change
     if pct_change > 0:
@@ -75,14 +74,53 @@ for row in ucrdata:
 
     #Uh oh. If we have a decrease, it'll appear as a negative number. Since news organizations don't publish "a -10 percent decline", we have to fix that. It's simple -- we just need the absolute value.
     pct_change_text = abs(pct_change)
-    
 
-    #This is broken -- fixing it in the morning.
+# Now we can handle the violent crime rate
+
+    vrate2012 = ((float(row[4]))/float(row[3]))*100000
+    vrate2011 = ((float(row[15]))/float(row[14]))*100000
+    vrate2010 = ((float(row[25]))/float(row[24]))*100000
+
+    if vrate2012 > vrate2011:
+        vdirection = "more"
+    elif vrate2012 < vrate2011:
+        vdirection = "less"
+    else:
+        vdirection = "the same"
+
+    # determine the duration of the trend
+    if vrate2012 > vrate2011 > vrate2010:
+        vtrend_length_clause = ", the second year in a row figures have increased"
+    elif vrate2012 < vrate2011 < vrate2010:
+        vtrend_length_clause = ", the second year in a row figures have declined"
+    else:
+        vtrend_length_clause = ""
+
+    # percent change math time -- remember (new-old)/old
+
+    vpct_change = ((vrate2012-vrate2011) / vrate2011)*100
+
+    # lets get some verbiage on the direction of the change
+    if vpct_change > 0:
+        vpct_change_direction = "rose"
+    elif vpct_change < 0:
+        vpct_change_direction = "slid"
+    else:
+        vpct_change_direction = "maintained"
+
+    #Uh oh. If we have a decrease, it'll appear as a negative number. Since news organizations don't publish "a -10 percent decline", we have to fix that. It's simple -- we just need the absolute value.
+    vpct_change_text = abs(vpct_change)
 
     #write the story
-    lede = "%s police reported %s violent crime in 2010 compared to 2009%s, according to federal statistics." % (clean_city, direction, trend_length_clause)
-    second = "The violent crime rate %s by %.0f percent from 2009 to 2010, the Federal Bureau of Investigation reported. In 2010, %s police reported %s violent crimes per 100,000 residents, versus %s violent crimes per 100,000 residents in 2009." % (pct_change_direction, pct_change_text, clean_city, city[4], city[3])
-    context = "The 2010 violent crime rate in %s is %s than the statewide rate of %s per 100,000 people, and %s than the national rate of %s per capita." % (clean_city, state_comp, state[3], national_comp, national[3])
-    story = lede + "\n" + second + "\n" + context + "\n"
+    if pct_change > 1:
+        lede = "%s, %s -- %s police reported %.0f percent %s crime overall in 2012 compared to 2011%s, according to federal statistics." % (string.upper(row[2]), row[1], row[2], pct_change_text, direction, trend_length_clause)
+    else:
+        lede = "%s, %s -- %s police reported a little %s crime overall in 2012 compared to 2011%s, according to federal statistics." % (string.upper(row[2]), row[1], row[2], direction, trend_length_clause)
+
+    second = "The violent crime rate %s by %.0f percent from 2011 to 2012, the Federal Bureau of Investigation reported. In 2012, %s police reported %s violent crimes per 100,000 residents, versus %s violent crimes per 100,000 residents in 2011." % (vpct_change_direction, vpct_change_text, row[2], row[4], row[15])
+
+#    context = "The 2010 violent crime rate in %s is %s than the statewide rate of %s per 100,000 people, and %s than the national rate of %s per capita." % (clean_city, state_comp, state[3], national_comp, national[3])
+    story = lede + "\n" + second # + "\n" + context + "\n"
 
     print story
+    
