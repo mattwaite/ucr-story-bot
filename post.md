@@ -1,4 +1,4 @@
-#How to write 261 ledes in a tenth of a second
+#How to write 261 ledes in a fraction of a second
 
 If you're the kind of person who worries about your job when they read about bots writing stories or the kind who tweets something snarky/dumb after reading something like [this](http://www.poynter.org/latest-news/mediawire/221669/washington-post-considered-using-robot-sportswriters/), stop.
 
